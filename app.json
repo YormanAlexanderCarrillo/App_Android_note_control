@@ -4,10 +4,10 @@
     "slug": "Note_Control",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icono.png",
+    "icon": "./assets/iconoApp.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icono.png",
+      "image": "./assets/iconoApp.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icono.png",
+        "foregroundImage": "./assets/iconoApp.png",
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan"
