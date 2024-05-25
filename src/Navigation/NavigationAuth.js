@@ -6,7 +6,7 @@ import RegisterScreen from "../Screens/RegisterScreen";
 import LoginScreen from "../Screens/LoginScreen";
 const Tab = createBottomTabNavigator();
 
-export default function NavigationAuth() {
+export default function NavigationAuth({checkToken}) {
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
@@ -17,7 +17,6 @@ export default function NavigationAuth() {
       >
         <Tab.Screen
           name="Login"
-          component={LoginScreen}
           options={{
             tabBarLabel: "Ingreso",
             tabBarIcon: ({ color, size }) => (
@@ -25,7 +24,9 @@ export default function NavigationAuth() {
             ),
             headerShown: false,
           }}
-        ></Tab.Screen>
+        >
+         {()=> <LoginScreen checkToken= {checkToken}/>} 
+        </Tab.Screen>
         <Tab.Screen
           name="Register"
           component={RegisterScreen}

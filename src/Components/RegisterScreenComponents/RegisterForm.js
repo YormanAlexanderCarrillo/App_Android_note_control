@@ -123,9 +123,9 @@ export default function RegisterForm() {
           value={dataUser.password}
         />
         <TouchableOpacity style={styles.btnRegister} onPress={handleRegister}>
-          <AntDesign name="checkcircleo" size={24} color="black" />
+          <AntDesign name="checkcircleo" size={24} color="#ffffff" />
           <Text style={styles.textBtns}>Registrar</Text>
-          <ActivityIndicator size="small" color="#ccb502" animating={isLoading} />
+          <ActivityIndicator size="small" color="#ffffff" animating={isLoading} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleRegister}>
           <Text
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ebf3ff",
   },
   containerForm: {
-    backgroundColor: "#ccb502",
+    backgroundColor: "#cda201",
     borderRadius: 30,
     width: windowWidth * 0.9,
     paddingVertical: windowHeight * 0.07,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     paddingBottom: windowHeight * 0.05,
   },
   InputText: {
-    backgroundColor: "#dbe8ff",
+    backgroundColor: "#ffffff",
     height: windowHeight * 0.08,
     marginTop: windowHeight * 0.02,
     marginLeft: windowWidth * 0.1,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   btnRegister: {
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#000000",
     marginTop: windowHeight * 0.05,
     marginBottom: windowHeight * 0.03,
     marginLeft: windowWidth * 0.1,
@@ -186,14 +186,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   textLogin: {
-    color: "#ffffff",
+    color: "#000000",
     alignSelf: "center",
     fontSize: 15,
     
   },
   textBtns: {
     fontSize: 15,
-    color: "#000000",
+    color: "#ffffff",
     marginLeft: windowWidth* 0.04,
     marginRight: windowWidth* 0.04,
   },

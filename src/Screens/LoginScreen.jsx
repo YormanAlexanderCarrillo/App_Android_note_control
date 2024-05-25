@@ -9,12 +9,12 @@ import {
 import React from "react";
 import LoginForm from "../Components/LoginScreenComponents/LoginForm";
 
-export default function LoginScreen({ checkUid }) {
+export default function LoginScreen({ checkToken }) {
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar />
             <View style={styles.container}>
-                <LoginForm checkUid={checkUid} />
+                <LoginForm checkToken={checkToken} />
             </View>
         </SafeAreaView>
     );

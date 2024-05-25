@@ -15,16 +15,29 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
+import ModalRecoveryPassword from "./ModalRecoveryPassword";
 
-export default function LoginForm({ checkUid }) {
+export default function LoginForm({ checkToken }) {
   const ApiUrl = process.env.EXPO_PUBLIC_API_URL;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const [dataLogin, setDataLogin] = useState({
     email: "",
     password: "",
   });
+
+
+  
+  const showModal = () => {
+    setIsVisibleModal(true);
+  }
+
+  const handleCloseModal = () => {
+    setIsVisibleModal(false);
+  };
+
 
   const handleLogin = async () => {
     console.log(ApiUrl);
@@ -48,7 +61,7 @@ export default function LoginForm({ checkUid }) {
           });
           const token = response.data.token
           saveDataInPhone(token);
-          checkUid();
+          checkToken();
         }
         setIsLoading(false);
       })
@@ -70,7 +83,7 @@ export default function LoginForm({ checkUid }) {
   return (
     <View style={styles.container}>
       <View style={styles.containerForm}>
-        <Text style={styles.text}>Gestor de Tareas</Text>
+        <Text style={styles.text}>Ingreso</Text>
         <TextInput
           style={styles.InputText}
           inputMode="email"
@@ -87,13 +100,13 @@ export default function LoginForm({ checkUid }) {
           }
           value={dataLogin.password}
         ></TextInput>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={showModal}>
           <Text style={styles.textForgotPassword}> ¿Olvido su contraseña?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnSingIn} onPress={handleLogin}>
-          <MaterialIcons name="login" size={24} color="black" />
+          <MaterialIcons name="login" size={24} color="white" />
           <Text style={styles.textBtns}>Ingresar</Text>
-          <ActivityIndicator size="small" color="#000" animating={isLoading} />
+          <ActivityIndicator size="small" color="#fff" animating={isLoading} />
         </TouchableOpacity>
         <TouchableOpacity>
           <Text
@@ -104,6 +117,7 @@ export default function LoginForm({ checkUid }) {
           </Text>
         </TouchableOpacity>
       </View>
+      <ModalRecoveryPassword visible={isVisibleModal} onClose={handleCloseModal}/>
     </View>
   );
 }
@@ -117,7 +131,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   containerForm: {
-    backgroundColor: "#ccb502",
+    backgroundColor: "#cda201",
     margin: 10,
     borderRadius: 30,
     width: windowWidth * 0.9,
@@ -132,7 +146,7 @@ const styles = StyleSheet.create({
     paddingBottom: windowHeight * 0.05,
   },
   InputText: {
-    backgroundColor: "#dbe8ff",
+    backgroundColor: "#ffffff",
     height: windowHeight * 0.08,
     marginTop: windowHeight * 0.02,
     marginLeft: windowWidth * 0.1,
@@ -142,14 +156,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   textForgotPassword: {
-    color: "#fff",
+    color: "#000000",
     textAlign: "right",
     marginTop: windowHeight * 0.02,
     marginRight: windowWidth * 0.1,
   },
   btnSingIn: {
     alignItems: "center",
-    backgroundColor: "#effefa",
+    backgroundColor: "#000000",
     marginTop: windowHeight * 0.05,
     marginBottom: windowHeight * 0.03,
     marginLeft: windowWidth * 0.1,
@@ -161,12 +175,12 @@ const styles = StyleSheet.create({
   },
   textBtns: {
     fontSize: 15,
-    color: "#000",
+    color: "#ffffff",
     marginLeft: 20,
     marginRight: 20,
   },
   textRegister: {
-    color: "#fff",
+    color: "#000000",
     alignSelf: "center",
     fontSize: 15,
   },
