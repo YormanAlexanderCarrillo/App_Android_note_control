@@ -22,10 +22,16 @@
         "foregroundImage": "./assets/iconoApp.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.yorman.carrillo.Note_Control"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8611ee27-529e-47a5-b33a-427ea19e45c0"
+      }
     }
   }
 }

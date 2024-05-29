@@ -7,7 +7,7 @@ import {
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
-  ToastAndroid,
+  // ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,27 +15,24 @@ import { windowWidth, windowHeight } from "../../Utils/Constants";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
-
-
 export default function RegisterForm() {
   const ApiUrl = process.env.EXPO_PUBLIC_API_URL;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
 
   const [dataUser, setDataUser] = useState({
-    name:"",
+    name: "",
     lastname: "",
     email: "",
     carrier: "",
-    password:"",
-    phone: ""
-  })
- 
+    password: "",
+    phone: "",
+  });
 
   const handleRegister = async () => {
     console.log(ApiUrl);
     if (dataUser.password.length >= 6) {
-      setIsLoading(true)
+      setIsLoading(true);
       await axios
         .post(`${ApiUrl}/user/registerUser`, dataUser)
         .then((response) => {
@@ -47,17 +44,20 @@ export default function RegisterForm() {
               email: "",
               password: "",
             });
-            ToastAndroid.showWithGravityAndOffset(
-              "Usuario registrado",
-              ToastAndroid.LONG,
-              ToastAndroid.TOP,
-              0,
-              100
-            );
+            if (Platform.OS === "android") {
+              ToastAndroid.showWithGravityAndOffset(
+                "Usuario registrado",
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+                0,
+                100
+              );
+            }
+
             navigation.navigate("Login");
-            setIsLoading(false)
+            setIsLoading(false);
           }
-          if (response.data.status === false) {
+          if (response.data.status === false && Platform.OS === 'android') {
             ToastAndroid.showWithGravityAndOffset(
               "Error ",
               ToastAndroid.LONG,
@@ -65,28 +65,35 @@ export default function RegisterForm() {
               0,
               100
             );
-            setIsLoading(false)
+            setIsLoading(false);
           }
         })
         .catch((error) => {
           console.error(error);
-          ToastAndroid.showWithGravityAndOffset(
-            "Error al registrar",
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            100
-          );
-          setIsLoading(false)
+          if (Platform.OS === 'android') {
+            ToastAndroid.showWithGravityAndOffset(
+              "Error al registrar",
+              ToastAndroid.LONG,
+              ToastAndroid.TOP,
+              0,
+              100
+            );
+          }
+          
+          setIsLoading(false);
         });
     } else {
-      ToastAndroid.showWithGravityAndOffset(
-        "Contraseña muy corta",
-        ToastAndroid.SHORT,
-        ToastAndroid.TOP,
-        0,
-        100
-      );
+      if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravityAndOffset(
+          "Contraseña muy corta",
+          ToastAndroid.SHORT,
+          ToastAndroid.TOP,
+          0,
+          100
+        );
+      }
+      console.log(error);
+      
     }
   };
 
@@ -98,21 +105,21 @@ export default function RegisterForm() {
           style={styles.InputText}
           placeholder="Nombre"
           inputMode="text"
-          onChangeText={(text) => setDataUser({...dataUser, name: text})}
+          onChangeText={(text) => setDataUser({ ...dataUser, name: text })}
           value={dataUser.name}
         />
         <TextInput
           style={styles.InputText}
           placeholder="Apellido"
           inputMode="text"
-          onChangeText={(text)=> setDataUser({...dataUser, lastname: text})}
+          onChangeText={(text) => setDataUser({ ...dataUser, lastname: text })}
           value={dataUser.lastname}
         />
         <TextInput
           style={styles.InputText}
           placeholder="Correo"
           inputMode="email"
-          onChangeText={(text)=> setDataUser({...dataUser, email: text})}
+          onChangeText={(text) => setDataUser({ ...dataUser, email: text })}
           value={dataUser.email}
         />
         <TextInput
@@ -125,7 +132,11 @@ export default function RegisterForm() {
         <TouchableOpacity style={styles.btnRegister} onPress={handleRegister}>
           <AntDesign name="checkcircleo" size={24} color="#ffffff" />
           <Text style={styles.textBtns}>Registrar</Text>
-          <ActivityIndicator size="small" color="#ffffff" animating={isLoading} />
+          <ActivityIndicator
+            size="small"
+            color="#ffffff"
+            animating={isLoading}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleRegister}>
           <Text
@@ -135,7 +146,6 @@ export default function RegisterForm() {
             ¿Ya tienes una cuenta?
           </Text>
         </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -171,7 +181,7 @@ const styles = StyleSheet.create({
     marginRight: windowWidth * 0.1,
     borderRadius: 20,
     fontSize: 15,
-    paddingLeft: windowWidth*0.05,
+    paddingLeft: windowWidth * 0.05,
   },
   btnRegister: {
     alignItems: "center",
@@ -189,12 +199,11 @@ const styles = StyleSheet.create({
     color: "#000000",
     alignSelf: "center",
     fontSize: 15,
-    
   },
   textBtns: {
     fontSize: 15,
     color: "#ffffff",
-    marginLeft: windowWidth* 0.04,
-    marginRight: windowWidth* 0.04,
+    marginLeft: windowWidth * 0.04,
+    marginRight: windowWidth * 0.04,
   },
 });
