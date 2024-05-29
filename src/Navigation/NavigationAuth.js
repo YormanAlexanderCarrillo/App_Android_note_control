@@ -3,20 +3,20 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import RegisterScreen from "../Screens/RegisterScreen";
+import LoginScreen from "../Screens/LoginScreen";
 const Tab = createBottomTabNavigator();
 
-export default function NavigationAuth() {
+export default function NavigationAuth({checkToken}) {
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
-        initialRouteName="Register"
+        initialRouteName="Login"
         screenOptions={{
           tabBarActiveTintColor: "#CAA603",
         }}
       >
         <Tab.Screen
           name="Login"
-          component={RegisterScreen}
           options={{
             tabBarLabel: "Ingreso",
             tabBarIcon: ({ color, size }) => (
@@ -24,7 +24,9 @@ export default function NavigationAuth() {
             ),
             headerShown: false,
           }}
-        ></Tab.Screen>
+        >
+         {()=> <LoginScreen checkToken= {checkToken}/>} 
+        </Tab.Screen>
         <Tab.Screen
           name="Register"
           component={RegisterScreen}
