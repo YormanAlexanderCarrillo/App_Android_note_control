@@ -40,6 +40,7 @@ export default function ModalRecoveryPassword({ visible, onClose }) {
           }
         })
         .catch((error) => {
+          setIsLoading(false)
           console.log(error);
         });
     } catch (error) {
