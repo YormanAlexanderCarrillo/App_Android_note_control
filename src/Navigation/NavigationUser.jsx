@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import HomeScreen from "../Screens/HomeScreen";
 import React from "react";
 import ProfileScreen from "../Screens/ProfileScreen";
+import ActivitiesScreen from "../Screens/ActivitiesScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +16,7 @@ export default function NavigationUser({ checkToken }) {
       <Tab.Navigator
         initialRouteName="Home"
         screenOptions={{
-          tabBarActiveTintColor: "#009c68",
+          tabBarActiveTintColor: "#ff2759",
         }}
       >
         <Tab.Screen
@@ -30,11 +33,11 @@ export default function NavigationUser({ checkToken }) {
 
         <Tab.Screen
           name="Tasks"
-          component={HomeScreen}
+          component={ActivitiesScreen}
           options={{
-            tabBarLabel: "Tareas",
+            tabBarLabel: "Actividades",
             tabBarIcon: ({ color, size }) => (
-              <AntDesign name="calendar" size={size} color={color} />
+              <Entypo name="open-book" size={size} color={color} />
             ),
             headerShown: false,
           }}
@@ -43,9 +46,9 @@ export default function NavigationUser({ checkToken }) {
           name="AddTask"
           component={HomeScreen}
           options={{
-            tabBarLabel: "Agregar tarea",
+            tabBarLabel: "Notificaciones",
             tabBarIcon: ({ color, size }) => (
-              <AntDesign name="pluscircleo" size={size} color={color} />
+              <Ionicons name="notifications-circle-outline" size={size} color={color}/>
             ),
             headerShown: false,
           }}
