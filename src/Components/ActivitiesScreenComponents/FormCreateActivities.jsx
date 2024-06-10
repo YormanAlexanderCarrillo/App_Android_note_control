@@ -14,13 +14,22 @@ import RNPickerSelect from "react-native-picker-select";
 export default function FormCreateActivities() {
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [isDatePickerVisible, setDatePicketVisible] = useState(false);
-  const [selelectedSubject, setSelectedSubject] = useState();
+  const [selelectedSubject, setSelectedSubject] = useState("");
+  const [nameActivity, setNameActivity] = useState("");
   const [date, setDate] = useState("");
+  const [percentage, setPercentage] = useState("")
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const items = [
     { label: "Football", value: "football" },
     { label: "Baseball", value: "baseball" },
     { label: "Hockey", value: "hockey" },
+  ];
+
+  const estados = [
+    { label: "Pendiente", value: "Pending" },
+    { label: "En Progreso", value: "In progress" },
+    { label: "Finalizada", value: "finished" },
   ];
 
   const showModal = () => {
@@ -60,28 +69,43 @@ export default function FormCreateActivities() {
             onValueChange={(value) => setSelectedSubject(value)}
             items={items}
             placeholder={{
-                label: "Seleccione una materia",
-                value: null,
-                color: "#000"
+              label: "Seleccione una materia",
+              value: null,
+              color: "#B2B2B2",
             }}
+            style={{ placeholder: { color: "#787878" } }}
           />
         </View>
 
         <TextInput
           style={styles.InputText}
           placeholder="Nombre Actividad"
+          placeholderTextColor="#787878"
+          onChangeText={(value)=> setNameActivity(value)}
         ></TextInput>
 
-        <TouchableOpacity style={styles.InputText} onPress={showDatePicker}>
-          <Text>{date ? `${date}` : `Seleccione Fecha`}</Text>
+        <TouchableOpacity style={styles.InputText} onPress={showDatePicker} >
+          <Text style={{color: date ? "#000000" : "#787878"}}>{date ? `${date}` : `Seleccione Fecha`}</Text>
         </TouchableOpacity>
 
         <TextInput
           style={styles.InputText}
           inputMode="numeric"
           placeholder="Porcentaje Calificación"
+          onChangeText={(value)=> setPercentage(value)}
         ></TextInput>
-        <TextInput style={styles.InputText} placeholder="Estado"></TextInput>
+        <View style={styles.InputText}>
+          <RNPickerSelect
+            onValueChange={(value) => setSelectedStatus(value)}
+            items={estados}
+            placeholder={{
+              label: "Estado actividad",
+              value: null,
+              color: "#B2B2B2",
+            }}
+            style={{ placeholder: { color: "#787878" } }}
+          />
+        </View>
         <TouchableOpacity style={styles.btnSave}>
           <Text style={styles.textBtn}>Agregar</Text>
         </TouchableOpacity>
@@ -132,7 +156,7 @@ const styles = StyleSheet.create({
   },
   btnSave: {
     alignItems: "center",
-    backgroundColor: "#373cff",
+    backgroundColor: "#3494E9",
     marginTop: windowHeight * 0.08,
     marginBottom: windowHeight * 0.03,
     marginRight: windowWidth * 0.1,
