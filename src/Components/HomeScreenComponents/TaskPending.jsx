@@ -28,7 +28,7 @@ export default function TaskPending() {
                 <View>
                   <Text style={styles.textNameTaskBtns}>Titulo tarea</Text>
                   <Text style={{ color: "#ff3030", fontSize: 12 }}>
-                    pending
+                    pendiente
                   </Text>
                 </View>
               </View>

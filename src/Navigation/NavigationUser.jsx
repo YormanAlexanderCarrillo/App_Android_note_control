@@ -5,7 +5,7 @@ import { Entypo } from '@expo/vector-icons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import HomeScreen from "../Screens/HomeScreen";
 import React from "react";
-import ProfileScreen from "../Screens/ProfileScreen";
+import SettingsScreen from "../Screens/SettingsScreen";
 import ActivitiesScreen from "../Screens/ActivitiesScreen";
 
 const Tab = createBottomTabNavigator();
@@ -54,16 +54,16 @@ export default function NavigationUser({ checkToken }) {
           }}
         />
         <Tab.Screen
-          name="Profile"
+          name="Settings"
           options={{
-            tabBarLabel: "Perfil",
+            tabBarLabel: "Configuración",
             tabBarIcon: ({ color, size }) => (
-              <AntDesign name="user" size={size} color={color} />
+              <AntDesign name="setting" size={size} color={color} />
             ),
             headerShown: false,
           }}
         >
-          {() => <ProfileScreen checkToken={checkToken} />} 
+          {() => <SettingsScreen checkToken={checkToken} />} 
         </Tab.Screen>
       </Tab.Navigator>
     </View>
