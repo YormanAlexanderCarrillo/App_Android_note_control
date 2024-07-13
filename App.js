@@ -19,6 +19,7 @@ export default function App() {
     checkToken();
   }, []);
 
+
   if (isLoading) {
     return null;
   }

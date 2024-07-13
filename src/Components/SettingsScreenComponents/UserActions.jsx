@@ -1,25 +1,59 @@
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function UserActions({ checkToken }) {
   const [switchIsEnable, setSwitchIsEnable] = useState(false);
 
-  const handleSwitch = () => {
-    setSwitchIsEnable(!switchIsEnable);
+  const checkStatusSwitch = async () => {
+    try {
+      const notificationsEnabled = await AsyncStorage.getItem(
+        "notificationsEnabled"
+      );
+      console.log("Stored value:", notificationsEnabled);
+      setSwitchIsEnable(notificationsEnabled === "true");
+    } catch (error) {
+      console.error("Error reading from AsyncStorage:", error);
+    }
   };
 
-  const handleDeleteAccount= async ()=>{
+  useEffect(() => {
+    checkStatusSwitch();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadSwitchState = async () => {
+        const storedSwitchState = await AsyncStorage.getItem("notificationsEnabled");
+        if (switchIsEnable !== null) {
+          setSwitchIsEnable(JSON.parse(storedSwitchState));
+        }
+      };
+
+      loadSwitchState();
+    }, [])
+  );
+
+  const handleSwitch = async () => {
+    setSwitchIsEnable(!switchIsEnable);
+    await AsyncStorage.setItem(
+      "notificationsEnabled",
+      JSON.stringify(!switchIsEnable)
+    );
+  };
+
+  const handleDeleteAccount = async () => {
     try {
-      const token = await AsyncStorage.getItem("Token")
-      const decode = jwtDecode(token)
+      const token = await AsyncStorage.getItem("Token");
+      const decode = jwtDecode(token);
       console.log(decode);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const logout = async () => {
     try {
@@ -59,7 +93,7 @@ export default function UserActions({ checkToken }) {
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleDeleteAccount}>
-          <Text style={styles.textBtn} >Eliminar Cuenta</Text>
+          <Text style={styles.textBtn}>Eliminar Cuenta</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={logout}>
           <Text style={styles.textBtn}>Cerrar Sesión</Text>

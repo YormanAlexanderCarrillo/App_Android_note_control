@@ -7,6 +7,7 @@ import HomeScreen from "../Screens/HomeScreen";
 import React from "react";
 import SettingsScreen from "../Screens/SettingsScreen";
 import ActivitiesScreen from "../Screens/ActivitiesScreen";
+import NotificationsScreen from "../Screens/NotificationsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,8 +44,8 @@ export default function NavigationUser({ checkToken }) {
           }}
         />
         <Tab.Screen
-          name="AddTask"
-          component={HomeScreen}
+          name="Notifications"
+          component={NotificationsScreen}
           options={{
             tabBarLabel: "Notificaciones",
             tabBarIcon: ({ color, size }) => (
