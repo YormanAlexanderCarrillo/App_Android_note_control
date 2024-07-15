@@ -7,14 +7,58 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import "core-js/stable/atob";
 import React, { useState } from "react";
 import { colors, windowHeight, windowWidth } from "../../Utils/Constants";
 import ColorPalette from "react-native-color-palette";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 export default function ModalCreateSubject({ visible, onClose }) {
+  const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [isLoading, setIsLoading] = useState(false);
-  const [nameSubject, setNameSubject] = useState();
+  const [nameSubject, setNameSubject] = useState("");
   const [selectedColor, setSelectedColor] = useState("#ffffff");
+
+  const handleCreateSubject = async () => {
+    try {
+      const Token = await AsyncStorage.getItem("Token");
+      if (Token) {
+        setIsLoading(true)
+        const decode = jwtDecode(Token);
+        //console.log(decode);
+
+        const subject = {
+          name: nameSubject,
+          color: selectedColor,
+        };
+
+        axios
+          .post(`${URLAPI}/subject/saveSubject/${decode.id}`, subject, {
+            headers: {
+              Authorization: `${Token}`,
+            },
+          })
+          .then((response) => {
+            //console.log(response.data);
+            setIsLoading(false)
+            setNameSubject("")
+            setSelectedColor("#ffffff")
+            onClose()
+          })
+          .catch((error) => {
+            console.log(error);
+            setIsLoading(false)
+          });
+      } else {
+        console.log("Token no encontrado");
+      }
+    } catch (error) {
+      console.error("Error al manejar el token:", error);
+    }
+  };
+
   return (
     <View>
       <Modal animationType="slide" transparent={true} visible={visible}>
@@ -46,7 +90,9 @@ export default function ModalCreateSubject({ visible, onClose }) {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.btnSave}>
-                <Text style={styles.textButton}>Guardar</Text>
+                <Text style={styles.textButton} onPress={handleCreateSubject}>
+                  Guardar
+                </Text>
                 <ActivityIndicator
                   size="small"
                   color="#fff"
@@ -114,7 +160,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.3,
     height: windowHeight * 0.05,
     borderRadius: 50,
-    backgroundColor: "red",
+    backgroundColor: "#D4233B",
   },
   btnSave: {
     alignItems: "center",
@@ -122,7 +168,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.3,
     height: windowHeight * 0.05,
     borderRadius: 50,
-    backgroundColor: "#0050d7",
+    backgroundColor: "#028F49",
     flexDirection: "row",
   },
   textButton: {
