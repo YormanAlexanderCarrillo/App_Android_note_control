@@ -1,36 +1,121 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import "core-js/stable/atob";
+import React, { useEffect, useState } from "react";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
 import ModalCreateSubject from "./ModalCreateSubject";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 export default function FormCreateActivities() {
+  const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [items, setItems] = useState([]);
   const [isDatePickerVisible, setDatePicketVisible] = useState(false);
   const [selelectedSubject, setSelectedSubject] = useState("");
   const [nameActivity, setNameActivity] = useState("");
   const [date, setDate] = useState("");
-  const [percentage, setPercentage] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("");
-
-  const items = [
-    { label: "Football", value: "football" },
-    { label: "Baseball", value: "baseball" },
-    { label: "Hockey", value: "hockey" },
-  ];
+  const [percentage, setPercentage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const estados = [
     { label: "Pendiente", value: "Pending" },
     { label: "En Progreso", value: "In progress" },
     { label: "Finalizada", value: "finished" },
   ];
+
+  useEffect(() => {
+    getSubjects();
+  }, [isVisibleModal]);
+
+  const getSubjects = async () => {
+    const Token = await AsyncStorage.getItem("Token");
+    if (Token) {
+      const decode = jwtDecode(Token);
+      axios
+        .get(`${URLAPI}/subject/getSubjects/${decode.id}`, {
+          headers: {
+            Authorization: `${Token}`,
+          },
+        })
+        .then((response) => {
+          //console.log(response.data);
+          const subjects = response.data.data;
+          const formatterItems = subjects.map((subject) => ({
+            label: subject.name,
+            value: subject._id,
+          }));
+
+          setItems(formatterItems);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      console.log("No se pudo obtener el token");
+    }
+  };
+
+  const createActivity = async () => {
+    console.log(selelectedSubject);
+    const Token = await AsyncStorage.getItem("Token");
+    if (Token) {
+      const activity = {
+        name: nameActivity,
+        dateEntry: date,
+        percent: percentage,
+      };
+      setIsLoading(true)
+      axios
+        .post(
+          `${URLAPI}/activity/saveActivity/${selelectedSubject}`,
+          activity,
+          {
+            headers: {
+              Authorization: `${Token}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("respuesta: ",response.data);
+          if (response.data.status === true) {
+            setSelectedSubject("");
+            setNameActivity("");
+            setDate("");
+            setPercentage("");
+            ToastAndroid.showWithGravityAndOffset(
+              "Actividad creada",
+              ToastAndroid.LONG,
+              ToastAndroid.TOP,
+              0,
+              100
+            );
+            setIsLoading(false)
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          ToastAndroid.showWithGravityAndOffset(
+            "Ocurrio un error",
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100
+          );
+          setIsLoading(false)
+        });
+    }
+  };
 
   const showModal = () => {
     setIsVisibleModal(true);
@@ -73,6 +158,7 @@ export default function FormCreateActivities() {
               value: null,
               color: "#B2B2B2",
             }}
+            value={selelectedSubject}
             style={{ placeholder: { color: "#787878" } }}
           />
         </View>
@@ -81,20 +167,27 @@ export default function FormCreateActivities() {
           style={styles.InputText}
           placeholder="Nombre Actividad"
           placeholderTextColor="#787878"
-          onChangeText={(value)=> setNameActivity(value)}
-        ></TextInput>
+          onChangeText={(value) => setNameActivity(value)}
+        >
+          {nameActivity ? `${nameActivity}`: ""}
+        </TextInput>
 
-        <TouchableOpacity style={styles.InputText} onPress={showDatePicker} >
-          <Text style={{color: date ? "#000000" : "#787878"}}>{date ? `${date}` : `Seleccione Fecha`}</Text>
+        <TouchableOpacity style={styles.InputText} onPress={showDatePicker}>
+          <Text style={{ color: date ? "#000000" : "#787878" }}>
+            {date ? `${date}` : `Seleccione Fecha Entrega`}
+          </Text>
         </TouchableOpacity>
 
         <TextInput
           style={styles.InputText}
           inputMode="numeric"
           placeholder="Porcentaje Calificación"
-          onChangeText={(value)=> setPercentage(value)}
-        ></TextInput>
-        <View style={styles.InputText}>
+          placeholderTextColor="#787878"
+          onChangeText={(value) => setPercentage(value)}
+        >
+          {percentage ? `${percentage}`: ""}
+        </TextInput>
+        {/* <View style={styles.InputText}>
           <RNPickerSelect
             onValueChange={(value) => setSelectedStatus(value)}
             items={estados}
@@ -105,9 +198,14 @@ export default function FormCreateActivities() {
             }}
             style={{ placeholder: { color: "#787878" } }}
           />
-        </View>
-        <TouchableOpacity style={styles.btnSave}>
-          <Text style={styles.textBtn}>Agregar</Text>
+        </View> */}
+        <TouchableOpacity style={styles.btnSave} onPress={createActivity}>
+          <Text style={styles.textBtn}>Guardar</Text>
+          <ActivityIndicator
+            size="small"
+            color="#ffffff"
+            animating={isLoading}
+          />
         </TouchableOpacity>
       </View>
       <ModalCreateSubject visible={isVisibleModal} onClose={handleCloseModal} />
@@ -141,7 +239,7 @@ const styles = StyleSheet.create({
     paddingTop: windowHeight * 0.03,
   },
   InputText: {
-    backgroundColor: "#dedede",
+    backgroundColor: "#ffffff",
     height: windowHeight * 0.08,
     marginTop: windowHeight * 0.02,
     width: windowWidth * 0.9,
@@ -169,6 +267,7 @@ const styles = StyleSheet.create({
   },
   textBtn: {
     color: "#ffffff",
+    marginRight:15,
   },
   ButtonDate: {
     backgroundColor: "#fbf4ff",

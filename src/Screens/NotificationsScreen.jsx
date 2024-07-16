@@ -38,13 +38,13 @@ export default function NotificationsScreen() {
         id: "1",
         title: "Tarea para notificación de una hora",
         description: "Esta tarea activará la notificación de una hora antes",
-        fechaentrega: "2024-07-13T21:20:00Z",
+        fechaentrega: "2024-07-15T21:20:00Z",
       },
       {
         id: "2",
         title: "Tarea para notificación de un día",
         description: "Esta tarea activará la notificación de un día antes",
-        fechaentrega: "2024-07-14T15:20:00Z",
+        fechaentrega: "2024-07-16T15:20:00Z",
       },
       {
         id: "3",
