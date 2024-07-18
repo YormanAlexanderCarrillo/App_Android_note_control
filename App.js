@@ -19,24 +19,24 @@ export default function App() {
     checkToken();
   }, []);
 
-
   if (isLoading) {
     return null;
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar style="auto" />
-      <View style={{ flex: 1 }}>
-        <NavigationContainer>
-          {existToken ? (
-            <NavigationUser checkToken={() => setExistToken(false)} />
-          ) : (
-            <NavigationAuth checkToken={() => setExistToken(true)} />
-          )}
-        </NavigationContainer>
-      </View>
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+
+        <View style={{ flex: 1 }}>
+          <NavigationContainer>
+            {existToken ? (
+              <NavigationUser checkToken={() => setExistToken(false)} />
+            ) : (
+              <NavigationAuth checkToken={() => setExistToken(true)} />
+            )}
+          </NavigationContainer>
+        </View>
+      </SafeAreaView>
   );
 }
 
