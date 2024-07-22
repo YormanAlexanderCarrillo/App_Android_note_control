@@ -13,16 +13,28 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { jwtDecode } from "jwt-decode";
+import ModalUpdateActivity from "./ModalUpdateActivity";
 
 export default function TaskPending() {
   const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [activityPending, setActivityPending] = useState([]);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState()
 
   useFocusEffect(
     useCallback(() => {
       getTaskPending();
-    }, [])
+    }, [isVisibleModal])
   );
+
+  const showModal = (activity) => {
+    setSelectedActivity(activity)
+    setIsVisibleModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsVisibleModal(false);
+  };
 
   const getTaskPending = async () => {
     try {
@@ -62,7 +74,7 @@ export default function TaskPending() {
         ) : (
           activityPending.map((activity, index) => (
             <View style={styles.ViewBtns} key={index}>
-              <TouchableOpacity style={styles.buttonTask}>
+              <TouchableOpacity style={styles.buttonTask} onPress={()=> showModal(activity)}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <View style={{ paddingRight: 20 }}>
                     <FontAwesome
@@ -85,6 +97,7 @@ export default function TaskPending() {
           ))
         )}
       </ScrollView>
+      <ModalUpdateActivity activity={selectedActivity} visible={isVisibleModal} onClose={handleCloseModal}/>
     </View>
   );
 }

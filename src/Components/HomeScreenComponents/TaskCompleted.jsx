@@ -13,15 +13,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import ModalUpdateActivity from "./ModalUpdateActivity";
 
 export default function TaskCompleted() {
   const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [activityCompleted, setActivityCompleted] = useState([]);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState()
 
   useFocusEffect(
     useCallback(()=>{
       getActivityCompleted()
-    },[])
+    },[isVisibleModal])
   )
 
   const getActivityCompleted = async () => {
@@ -48,6 +51,16 @@ export default function TaskCompleted() {
     }
   };
 
+  const showModal = (activity) => {
+    setSelectedActivity(activity)
+    setIsVisibleModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsVisibleModal(false);
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.viewText}>
@@ -63,7 +76,7 @@ export default function TaskCompleted() {
         ) : (
           activityCompleted.map((activity, index) => (
             <View style={styles.ViewBtns} key={index}>
-              <TouchableOpacity style={styles.buttonTask}>
+              <TouchableOpacity style={styles.buttonTask} onPress={()=> showModal(activity)}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <View style={{ paddingRight: 20 }}>
                     <Ionicons
@@ -86,6 +99,7 @@ export default function TaskCompleted() {
           ))
         )}
       </ScrollView>
+      <ModalUpdateActivity activity={selectedActivity} visible={isVisibleModal} onClose={handleCloseModal}/>
     </View>
   );
 }
@@ -105,7 +119,7 @@ const styles = StyleSheet.create({
   ViewBtns: {
     width: windowWidth,
     paddingLeft: 30,
-    paddingTop: 20,
+    paddingTop: 10,
   },
   buttonTask: {
     width: windowWidth * 0.85,
@@ -115,7 +129,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderWidth: 1,
     paddingLeft: 10,
-    marginBottom: 10,
   },
   textNameTaskBtns: {
     fontSize: windowWidth * 0.04,

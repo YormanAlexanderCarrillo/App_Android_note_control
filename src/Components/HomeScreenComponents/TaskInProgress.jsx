@@ -13,16 +13,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import ModalUpdateActivity from "./ModalUpdateActivity";
 
 export default function TaskInProgress() {
   const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [activityProgress, setActivityProgress] = useState([]);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState()
 
   useFocusEffect(
     useCallback(() => {
       getActivityProgress();
-    }, [])
+    }, [isVisibleModal])
   );
+
+  const showModal = (activity) => {
+    setSelectedActivity(activity)
+    setIsVisibleModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsVisibleModal(false);
+  };
+
 
   const getActivityProgress = async () => {
     try {
@@ -64,7 +77,7 @@ export default function TaskInProgress() {
         ) : (
           activityProgress.map((activity, index) => (
             <View style={styles.ViewBtns} key={index}>
-              <TouchableOpacity style={styles.buttonTask}>
+              <TouchableOpacity style={styles.buttonTask} onPress={()=> showModal(activity)}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <View style={{ paddingRight: 20 }}>
                     <MaterialCommunityIcons
@@ -87,6 +100,7 @@ export default function TaskInProgress() {
           ))
         )}
       </ScrollView>
+      <ModalUpdateActivity activity={selectedActivity} visible={isVisibleModal} onClose={handleCloseModal}/>
     </View>
   );
 }
@@ -106,7 +120,7 @@ const styles = StyleSheet.create({
   ViewBtns: {
     width: windowWidth,
     paddingLeft: 30,
-    paddingTop: 20,
+    paddingTop: 10,
   },
   buttonTask: {
     width: windowWidth * 0.85,
@@ -116,7 +130,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderWidth: 1,
     paddingLeft: 10,
-    marginBottom: 10,
   },
   textNameTaskBtns: {
     fontSize: windowWidth * 0.04,
