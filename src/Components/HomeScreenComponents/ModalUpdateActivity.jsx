@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -80,15 +81,21 @@ export default function ModalUpdateActivity({ visible, onClose, activity }) {
           .then((response) => {
             console.log(response.data);
             if (response.data.status === true) {
-              onClose()
+              onClose();
             }
           })
           .catch((error) => {
-            console.log(error);
+            ToastAndroid.showWithGravityAndOffset(
+              "No se pudo actualizar",
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              0,
+              100
+            );
           });
       }
     } catch (error) {
-      console.log(error);
+      console.log(error, "No se pudo obtener el token");
     }
   };
 
