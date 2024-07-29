@@ -7,6 +7,7 @@ import {
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
+  ToastAndroid,
   // ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
@@ -19,116 +20,119 @@ export default function RegisterForm() {
   const ApiUrl = process.env.EXPO_PUBLIC_API_URL;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [name, setName] = useState();
+  const [lastName, setLastName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
 
-  const [dataUser, setDataUser] = useState({
-    name: "",
-    lastname: "",
-    email: "",
-    carrier: "",
-    password: "",
-    phone: "",
-  });
+  const validatePassword = (password) => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    setIsValid(validatePassword(text));
+  };
 
   const handleRegister = async () => {
     console.log(ApiUrl);
-    if (dataUser.password.length >= 6) {
-      setIsLoading(true);
-      await axios
-        .post(`${ApiUrl}/user/registerUser`, dataUser)
-        .then((response) => {
-          console.log(response.data);
-          if (response.data.status === true) {
-            setDataUser({
-              name: "",
-              lastname: "",
-              email: "",
-              password: "",
-            });
-            if (Platform.OS === "android") {
-              ToastAndroid.showWithGravityAndOffset(
-                "Usuario registrado",
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                100
-              );
-            }
+    setIsLoading(true);
 
-            navigation.navigate("Login");
-            setIsLoading(false);
-          }
-          if (response.data.status === false && Platform.OS === 'android') {
-            ToastAndroid.showWithGravityAndOffset(
-              "Error ",
-              ToastAndroid.LONG,
-              ToastAndroid.TOP,
-              0,
-              100
-            );
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          if (Platform.OS === 'android') {
-            ToastAndroid.showWithGravityAndOffset(
-              "Error al registrar",
-              ToastAndroid.LONG,
-              ToastAndroid.TOP,
-              0,
-              100
-            );
-          }
-          
+    const dataUser = {
+      name: name,
+      lastname: lastName,
+      email: email,
+      carrier: "",
+      password: password,
+      phone: "",
+    };
+    await axios
+      .post(`${ApiUrl}/user/registerUser`, dataUser)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === true) {
           setIsLoading(false);
-        });
-    } else {
-      if (Platform.OS === 'android') {
+          setName("");
+          setLastName("");
+          setEmail("");
+          setPassword("");
+          ToastAndroid.showWithGravityAndOffset(
+            "Usuario registrado",
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100
+          );
+          navigation.navigate("Login");
+          
+        }
+        if (response.data.status === false) {
+          ToastAndroid.showWithGravityAndOffset(
+            "Error ",
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100
+          );
+          setIsLoading(false);
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
         ToastAndroid.showWithGravityAndOffset(
-          "Contraseña muy corta",
-          ToastAndroid.SHORT,
+          "Error al registrar",
+          ToastAndroid.LONG,
           ToastAndroid.TOP,
           0,
           100
         );
-      }
-      console.log(error);
-      
-    }
+      });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.containerForm}>
+        {!isValid && (
+          <Text style={styles.errorText}>
+            La contraseña debe tener al menos 8 caracteres, una letra mayúscula,
+            una letra minúscula, un número y un carácter especial.
+          </Text>
+        )}
         <Text style={styles.text}>Registro</Text>
         <TextInput
           style={styles.InputText}
           placeholder="Nombre"
           inputMode="text"
-          onChangeText={(text) => setDataUser({ ...dataUser, name: text })}
-          value={dataUser.name}
+          onChangeText={(text) => setName(text)}
+          value={name}
         />
         <TextInput
           style={styles.InputText}
           placeholder="Apellido"
           inputMode="text"
-          onChangeText={(text) => setDataUser({ ...dataUser, lastname: text })}
-          value={dataUser.lastname}
+          onChangeText={(text) => setLastName(text)}
+          value={lastName}
         />
         <TextInput
           style={styles.InputText}
           placeholder="Correo"
           inputMode="email"
-          onChangeText={(text) => setDataUser({ ...dataUser, email: text })}
-          value={dataUser.email}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
         />
         <TextInput
           style={styles.InputText}
           placeholder="Contraseña"
-          secureTextEntry={true}
-          onChangeText={(text) => setDataUser({ ...dataUser, password: text })}
-          value={dataUser.password}
+          secureTextEntry
+          onChangeText={handlePasswordChange}
+          value={password}
         />
+
         <TouchableOpacity style={styles.btnRegister} onPress={handleRegister}>
           <AntDesign name="checkcircleo" size={24} color="#ffffff" />
           <Text style={styles.textBtns}>Registrar</Text>
@@ -205,5 +209,13 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     marginLeft: windowWidth * 0.04,
     marginRight: windowWidth * 0.04,
+  },
+  inputError: {
+    borderColor: "red",
+  },
+  errorText: {
+    color: "#6A0DAD",
+    marginLeft: 30,
+    marginRight: 30,
   },
 });
