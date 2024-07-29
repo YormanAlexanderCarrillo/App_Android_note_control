@@ -4,9 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
 import { useFocusEffect } from "@react-navigation/native";
+import ModalUpdateData from "./ModalUpdateData";
+import axios from "axios";
 
 export default function UserActions({ checkToken }) {
+  const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [switchIsEnable, setSwitchIsEnable] = useState(false);
+  const [dataUser, setDataUser]= useState()
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const checkStatusSwitch = async () => {
     try {
@@ -27,7 +32,9 @@ export default function UserActions({ checkToken }) {
   useFocusEffect(
     useCallback(() => {
       const loadSwitchState = async () => {
-        const storedSwitchState = await AsyncStorage.getItem("notificationsEnabled");
+        const storedSwitchState = await AsyncStorage.getItem(
+          "notificationsEnabled"
+        );
         if (switchIsEnable !== null) {
           setSwitchIsEnable(JSON.parse(storedSwitchState));
         }
@@ -36,6 +43,37 @@ export default function UserActions({ checkToken }) {
       loadSwitchState();
     }, [])
   );
+
+  const getDataUser = async () => {
+    try {
+      const Token = await AsyncStorage.getItem("Token");
+      if (Token) {
+        const idUser = jwtDecode(Token);
+        axios
+          .get(`${URLAPI}/user/profileUser/${idUser.id}`, {
+            headers: {
+              Authorization: `${Token}`,
+            },
+          })
+          .then((response) => {
+            console.log(response.data.data);
+            setDataUser(response.data.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch (error) {}
+  };
+
+  function openModal() {
+    getDataUser()
+    setIsVisibleModal(true);
+  }
+
+  const handleCloseModal = () => {
+    setIsVisibleModal(false);
+  };
 
   const handleSwitch = async () => {
     setSwitchIsEnable(!switchIsEnable);
@@ -68,7 +106,7 @@ export default function UserActions({ checkToken }) {
   return (
     <View>
       <View style={styles.ViewBtns}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={openModal}>
           <Text style={styles.textBtn}>Actualizar Datos</Text>
         </TouchableOpacity>
         <View
@@ -99,6 +137,7 @@ export default function UserActions({ checkToken }) {
           <Text style={styles.textBtn}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
+      <ModalUpdateData visible={isVisibleModal} onClose={handleCloseModal} userData={dataUser}/>
     </View>
   );
 }

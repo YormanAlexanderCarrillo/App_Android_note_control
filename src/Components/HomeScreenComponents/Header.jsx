@@ -9,7 +9,7 @@ export default function Header() {
     <View style={styles.container}>
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
         <View style={{ width: windowWidth * 0.6, justifyContent: "center" }}>
-          <Text style={styles.texMessage}>Ten un buen dia!!</Text>
+          <Text style={styles.texMessage}>Excelente dia!!</Text>
         </View>
 
         <Image
