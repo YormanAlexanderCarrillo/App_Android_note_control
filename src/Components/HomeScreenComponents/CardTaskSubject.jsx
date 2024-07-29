@@ -11,16 +11,26 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import ModalTasksSubject from "./ModalTasksSubject";
 
 export default function CardTaskSubject() {
   const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [subjects, setSubjects] = useState([]);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [idSubjectSelected, setSubjectsSelected] = useState();
+  const [tasks, setTasks] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
       getSubjects();
-    }, [])
+    }, [isVisibleModal])
   );
+
+  useEffect(() => {
+    if (idSubjectSelected) {
+      getTasks();
+    }
+  }, [idSubjectSelected, isVisibleModal]);
 
   const getSubjects = async () => {
     const Token = await AsyncStorage.getItem("Token");
@@ -41,6 +51,38 @@ export default function CardTaskSubject() {
     }
   };
 
+  const getTasks = async () => {
+    try {
+      const Token = await AsyncStorage.getItem("Token");
+      if (Token) {
+        axios
+          .get(`${URLAPI}/activity/getActivitysSubject/${idSubjectSelected}`, {
+            headers: {
+              Authorization: `${Token}`,
+            },
+          })
+          .then((response) => {
+            setTasks(response.data.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  function openModal(id_subjects) {
+    setSubjectsSelected(id_subjects);
+    setIsVisibleModal(true);
+  }
+
+  const handleCloseModal = () => {
+    setTasks([]);
+    setIsVisibleModal(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -53,6 +95,7 @@ export default function CardTaskSubject() {
               <TouchableOpacity
                 key={index}
                 style={[styles.buttonCard, { backgroundColor: subject.color }]}
+                onPress={() => openModal(subject._id)}
               >
                 <Text style={styles.textCategory}>{subject.name}</Text>
                 <Text
@@ -63,6 +106,7 @@ export default function CardTaskSubject() {
           </ScrollView>
         </View>
       </View>
+      <ModalTasksSubject visible={isVisibleModal} onClose={handleCloseModal} tasks={tasks} setTasks={setTasks} />
     </View>
   );
 }

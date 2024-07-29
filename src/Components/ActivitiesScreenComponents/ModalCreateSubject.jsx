@@ -25,9 +25,8 @@ export default function ModalCreateSubject({ visible, onClose }) {
     try {
       const Token = await AsyncStorage.getItem("Token");
       if (Token) {
-        setIsLoading(true)
+        setIsLoading(true);
         const decode = jwtDecode(Token);
-        //console.log(decode);
 
         const subject = {
           name: nameSubject,
@@ -41,21 +40,21 @@ export default function ModalCreateSubject({ visible, onClose }) {
             },
           })
           .then((response) => {
-            //console.log(response.data);
-            setIsLoading(false)
-            setNameSubject("")
-            setSelectedColor("#ffffff")
-            onClose()
+            setIsLoading(false);
+            setNameSubject("");
+            setSelectedColor("#ffffff");
+            onClose();
           })
           .catch((error) => {
             console.log(error);
-            setIsLoading(false)
+            setIsLoading(false);
           });
       } else {
         console.log("Token no encontrado");
       }
     } catch (error) {
       console.error("Error al manejar el token:", error);
+      setIsLoading(false);
     }
   };
 
@@ -71,8 +70,9 @@ export default function ModalCreateSubject({ visible, onClose }) {
               <TextInput
                 style={styles.inputText}
                 placeholder="Nombre materia"
+                value={nameSubject}
                 onChangeText={(text) => setNameSubject(text)}
-              ></TextInput>
+              />
               <ColorPalette
                 onChange={(color) => setSelectedColor(color)}
                 defaultColor={"#FFFFFF"}
@@ -84,20 +84,25 @@ export default function ModalCreateSubject({ visible, onClose }) {
             <View style={styles.viewBtns}>
               <TouchableOpacity
                 style={styles.btnClose}
-                onPress={() => onClose()}
+                onPress={onClose}
+                disabled={isLoading}
               >
                 <Text style={styles.textButton}>Cerrar</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.btnSave}>
-                <Text style={styles.textButton} onPress={handleCreateSubject}>
-                  Guardar
-                </Text>
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  animating={isLoading}
-                />
+              <TouchableOpacity
+                style={styles.btnSave}
+                onPress={handleCreateSubject}
+                disabled={isLoading}
+              >
+                <Text style={styles.textButton}>Guardar</Text>
+                {isLoading && (
+                  <ActivityIndicator
+                    size="small"
+                    color="#fff"
+                    animating={isLoading}
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
