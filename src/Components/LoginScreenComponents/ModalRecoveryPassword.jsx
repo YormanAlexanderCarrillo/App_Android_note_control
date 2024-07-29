@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Modal,
   StyleSheet,
   Text,
@@ -12,7 +11,6 @@ import React, { useState } from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 export default function ModalRecoveryPassword({ visible, onClose }) {

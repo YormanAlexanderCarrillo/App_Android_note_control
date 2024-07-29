@@ -1,6 +1,5 @@
 import {
   Alert,
-  BackHandler,
   Modal,
   ScrollView,
   StyleSheet,

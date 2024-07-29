@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ToastAndroid,
-  // ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
