@@ -6,7 +6,7 @@ export default function NotificationList({ tasksNotification }) {
     return (
       <View style={styles.itemContainer}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.subtitle}>{item.description}</Text>
+        <Text style={styles.subtitle}>{'Fecha entrega: '+ item.fechaentrega.split('T')[0]}</Text>
       </View>
     );
   };

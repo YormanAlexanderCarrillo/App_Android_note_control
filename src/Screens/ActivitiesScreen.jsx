@@ -8,18 +8,18 @@ export default function ActivitiesScreen() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar />
       <View style={styles.container}>
-        <FormCreateActivities/>
+        <FormCreateActivities />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: "#FAFAFA",
-    },
-    container:{
-        flex:1,
-    }
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FAFAFA",
+  },
+  container: {
+    flex: 1,
+  },
 });

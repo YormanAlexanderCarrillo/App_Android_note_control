@@ -32,23 +32,13 @@ const NotificationService = {
     let notificationTitle;
     let notificationBody;
 
-    if (notificationType === "oneHour") {
-      //console.log("hora Actual: ", currentDate);
-      //console.log("si Hora ", deliveryDate.diff(currentDate, 'hours'));
-      if (deliveryDate.diff(currentDate, 'hours') <= 1 && deliveryDate.diff(currentDate, 'hours') >= 0 ) {
-        notificationTitle = "Recordatorio tarea hoy";
-        notificationBody = `La tarea ${title} debe entregarse en una hora.`;
-        notificationDate = currentDate.clone().add(10, "seconds").toDate(); 
-      }
-    } else if (notificationType === "oneDay") {
-      //console.log("si Dia ", deliveryDate.diff(currentDate, 'day'));
+    if (notificationType === "oneDay") {
       if (deliveryDate.diff(currentDate, 'hours') <= 24 && deliveryDate.diff(currentDate, 'hours') >=2) {
         notificationTitle = "Recordatorio: Tarea mañana";
         notificationBody = `La tarea ${title} debe entregarse mañana.`;
         notificationDate = currentDate.clone().add(30, "seconds").toDate(); 
       }
     } else if (notificationType === "oneWeek") {
-      //console.log("si semana ", deliveryDate.diff(currentDate, 'days'));
       if (deliveryDate.diff(currentDate, 'hours') <= 168 && deliveryDate.diff(currentDate, 'hours') >= 25) {
         notificationTitle = "Recordatorio: Tarea en una semana";
         notificationBody = `La tarea ${title} debe entregarse en una semana.`;
@@ -65,11 +55,16 @@ const NotificationService = {
         },
         trigger: notificationDate,
       });
+
+      const notifications = JSON.parse(await AsyncStorage.getItem('scheduledNotifications')) || [];
+      notifications.push({ taskId: id, type: notificationType });
+      await AsyncStorage.setItem('scheduledNotifications', JSON.stringify(notifications));
     }
   },
 
   async cancelAllNotifications() {
     await Notifications.cancelAllScheduledNotificationsAsync();
+    await AsyncStorage.removeItem('scheduledNotifications');
   },
 
   async registerForPushNotificationsAsync() {
@@ -96,7 +91,7 @@ const NotificationService = {
         console.error(e);
       }
     } else {
-      alert("Must use physical device for Push Notifications");
+      alert("Debe usar un dispositivo físico para las notificaciones push");
     }
 
     return token;
