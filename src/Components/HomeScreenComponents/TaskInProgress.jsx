@@ -71,7 +71,7 @@ export default function TaskInProgress() {
         {activityProgress.length === 0 ? (
           <View style={styles.noActivitiesContainer}>
             <Text style={styles.noActivitiesText}>
-              No hay tareas en prograso
+              No hay tareas en progreso
             </Text>
           </View>
         ) : (

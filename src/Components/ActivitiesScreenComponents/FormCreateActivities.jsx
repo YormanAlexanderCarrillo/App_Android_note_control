@@ -28,12 +28,6 @@ export default function FormCreateActivities() {
   const [percentage, setPercentage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const estados = [
-    { label: "Pendiente", value: "Pending" },
-    { label: "En Progreso", value: "In progress" },
-    { label: "Finalizada", value: "finished" },
-  ];
-
   useEffect(() => {
     getSubjects();
   }, [isVisibleModal]);
@@ -187,18 +181,6 @@ export default function FormCreateActivities() {
         >
           {percentage ? `${percentage}`: ""}
         </TextInput>
-        {/* <View style={styles.InputText}>
-          <RNPickerSelect
-            onValueChange={(value) => setSelectedStatus(value)}
-            items={estados}
-            placeholder={{
-              label: "Estado actividad",
-              value: null,
-              color: "#B2B2B2",
-            }}
-            style={{ placeholder: { color: "#787878" } }}
-          />
-        </View> */}
         <TouchableOpacity style={styles.btnSave} onPress={createActivity}>
           <Text style={styles.textBtn}>Guardar</Text>
           <ActivityIndicator

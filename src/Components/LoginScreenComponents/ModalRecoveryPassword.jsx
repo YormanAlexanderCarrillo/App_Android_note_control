@@ -1,32 +1,30 @@
 import {
-  ActivityIndicator,
   Modal,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Feather from "@expo/vector-icons/Feather";
 import { windowHeight, windowWidth } from "../../Utils/Constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 export default function ModalRecoveryPassword({ visible, onClose }) {
   const ApiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState({
     email: "",
   });
 
   const recoveryPassword = async () => {
     try {
-      const token = await AsyncStorage.getItem("Token");
       await axios
         .post(`${ApiUrl}/session/sendEmail`, email)
         .then((Response) => {
           console.log(Response.data);
-          setIsLoading(true);
           if (Response.data.status == true) {
             ToastAndroid.showWithGravityAndOffset(
               "Correo enviado",
@@ -35,16 +33,20 @@ export default function ModalRecoveryPassword({ visible, onClose }) {
               0,
               100
             );
-            setIsLoading(false);
             onClose();
           }
         })
         .catch((error) => {
-          setIsLoading(false)
           console.log(error);
+          ToastAndroid.showWithGravityAndOffset(
+            "Ocurrio un error",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            0,
+            100
+          );
         });
     } catch (error) {
-      setIsLoading(false);
       console.log(error);
     }
   };
@@ -62,6 +64,7 @@ export default function ModalRecoveryPassword({ visible, onClose }) {
                 style={styles.inputText}
                 placeholder="Correo"
                 onChangeText={(text) => setEmail({ email: text })}
+                inputMode="email"
               ></TextInput>
             </View>
             <View style={styles.viewBtns}>
@@ -69,19 +72,22 @@ export default function ModalRecoveryPassword({ visible, onClose }) {
                 style={styles.btnClose}
                 onPress={() => onClose()}
               >
-                <Text style={styles.textButton}>Cerrar</Text>
+                <Text style={styles.textButton}>
+                  <Feather name="x-circle" size={50} color="#D4233B" />
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.btnSave}
                 onPress={recoveryPassword}
               >
-                <Text style={styles.textButton}>Recuperar</Text>
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  animating={isLoading}
-                />
+                <Text style={styles.textButton}>
+                  <MaterialCommunityIcons
+                    name="send-circle-outline"
+                    size={50}
+                    color="#028F49"
+                  />
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -134,28 +140,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    justifyContent: "space-between",
+    padding: 10,
   },
   btnClose: {
     alignItems: "center",
     justifyContent: "center",
-    width: windowWidth * 0.3,
-    height: windowHeight * 0.05,
     borderRadius: 50,
-    backgroundColor: "red",
+    marginRight: 30,
   },
   btnSave: {
     alignItems: "center",
     justifyContent: "center",
-    width: windowWidth * 0.3,
-    height: windowHeight * 0.05,
     borderRadius: 50,
-    backgroundColor: "#000000",
-    flexDirection: 'row',
+    flexDirection: "row",
+    marginLeft: 30,
   },
   textButton: {
-    color: "#ffffff",
-    marginRight: windowWidth * 0.02
+    color: "white",
+    fontWeight: "bold",
   },
 });

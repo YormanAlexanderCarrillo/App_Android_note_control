@@ -85,28 +85,43 @@ export default function CardTaskSubject() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <View style={styles.ViewButton}>
-          <ScrollView
-            horizontal={true}
-            style={{ paddingBottom: windowHeight * 0.03 }}
-          >
-            {subjects.map((subject, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.buttonCard, { backgroundColor: subject.color }]}
-                onPress={() => openModal(subject._id)}
-              >
-                <Text style={styles.textCategory}>{subject.name}</Text>
-                <Text
-                  style={styles.textAmount}
-                >{`N° Tareas: ${subject.activities.length}`}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+      {subjects.length == 0 ? (
+        <View style={styles.noSubjectsContainer}>
+          <Text style={styles.noSubjectText}>No hay asignaturas creadas</Text>
         </View>
-      </View>
-      <ModalTasksSubject visible={isVisibleModal} onClose={handleCloseModal} tasks={tasks} setTasks={setTasks} />
+      ) : (
+        <View style={styles.row}>
+          <View style={styles.ViewButton}>
+            <ScrollView
+              horizontal={true}
+              style={{ paddingBottom: windowHeight * 0.03 }}
+            >
+              {subjects.map((subject, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.buttonCard,
+                    { backgroundColor: subject.color },
+                  ]}
+                  onPress={() => openModal(subject._id)}
+                >
+                  <Text style={styles.textCategory}>{subject.name}</Text>
+                  <Text
+                    style={styles.textAmount}
+                  >{`N° Tareas: ${subject.activities.length}`}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      )}
+
+      <ModalTasksSubject
+        visible={isVisibleModal}
+        onClose={handleCloseModal}
+        tasks={tasks}
+        setTasks={setTasks}
+      />
     </View>
   );
 }
@@ -150,5 +165,13 @@ const styles = StyleSheet.create({
     color: "#000000",
     marginBottom: 10,
     paddingTop: 5,
+  },
+  noSubjectsContainer: {
+    alignItems: "center",
+    marginTop: windowHeight * 0.06,
+  },
+  noSubjectText: {
+    fontSize: windowWidth * 0.05,
+    color: "#000",
   },
 });

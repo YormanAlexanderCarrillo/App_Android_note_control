@@ -1,4 +1,12 @@
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Switch,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
@@ -10,7 +18,7 @@ import axios from "axios";
 export default function UserActions({ checkToken }) {
   const URLAPI = process.env.EXPO_PUBLIC_API_URL;
   const [switchIsEnable, setSwitchIsEnable] = useState(false);
-  const [dataUser, setDataUser]= useState()
+  const [dataUser, setDataUser] = useState();
   const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const checkStatusSwitch = async () => {
@@ -67,7 +75,7 @@ export default function UserActions({ checkToken }) {
   };
 
   function openModal() {
-    getDataUser()
+    getDataUser();
     setIsVisibleModal(true);
   }
 
@@ -83,19 +91,66 @@ export default function UserActions({ checkToken }) {
     );
   };
 
-  const handleDeleteAccount = async () => {
-    try {
-      const token = await AsyncStorage.getItem("Token");
-      const decode = jwtDecode(token);
-      console.log(decode);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Eliminar Cuenta",
+      "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          onPress: async () => {
+            try {
+              const Token = await AsyncStorage.getItem("Token");
+              if (Token) {
+                const decode = jwtDecode(Token);
+                console.log(decode);
+                axios
+                  .delete(`${URLAPI}/user/deleteUser/${decode.id}`,{
+                    headers:{
+                      Authorization: `${Token}`
+                    }
+                  })
+                  .then((response) => {
+                    if (response.data.status === true) {
+                      logout()
+                    }
+                    ToastAndroid.showWithGravityAndOffset(
+                      "Cuenta eliminada",
+                      ToastAndroid.SHORT,
+                      ToastAndroid.TOP,
+                      0,
+                      100
+                    )
+                  })
+                  .catch((error) => {
+                    ToastAndroid.showWithGravityAndOffset(
+                      "Ocurrio un error",
+                      ToastAndroid.SHORT,
+                      ToastAndroid.TOP,
+                      0,
+                      100
+                    )
+                  });
+              }
+            } catch (error) {
+              console.log("Error al obtener el token", error);
+            }
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const logout = async () => {
     try {
       await AsyncStorage.removeItem("Token");
+      await AsyncStorage.removeItem("notificationsEnabled");
       console.log("Datos eliminados");
       checkToken();
     } catch (error) {
@@ -137,7 +192,11 @@ export default function UserActions({ checkToken }) {
           <Text style={styles.textBtn}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
-      <ModalUpdateData visible={isVisibleModal} onClose={handleCloseModal} userData={dataUser}/>
+      <ModalUpdateData
+        visible={isVisibleModal}
+        onClose={handleCloseModal}
+        userData={dataUser}
+      />
     </View>
   );
 }

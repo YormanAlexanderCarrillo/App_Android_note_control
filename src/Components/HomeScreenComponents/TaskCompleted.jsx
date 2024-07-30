@@ -70,7 +70,7 @@ export default function TaskCompleted() {
         {activityCompleted.length === 0 ? (
           <View style={styles.noActivitiesContainer}>
             <Text style={styles.noActivitiesText}>
-              No hay tareas Finalizadas
+              No hay tareas finalizadas
             </Text>
           </View>
         ) : (

@@ -6,7 +6,6 @@ import {
   Platform,
   TextInput,
   TouchableOpacity,
-  // ToastAndroid,
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
